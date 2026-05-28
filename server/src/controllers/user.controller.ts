@@ -1,7 +1,7 @@
 // controllers/userController.ts
 
 import { Request, Response } from "express";
-import User from "../model/user.model";
+import User from "../models/user.model";
 
 interface AuthRequest extends Request {
   user?: any;

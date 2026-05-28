@@ -4,7 +4,7 @@ import {
   registerUser,
   loginUser,
   logoutUser,
-} from "../controller/auth.controller";
+} from "../controllers/auth.controller";
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ const router = express.Router();
 router.post("/register", registerUser);
 
 // Login with email OR username
-router.get("/login", loginUser);
+router.post("/login", loginUser);
 
 // Logout
 router.post("/logout", logoutUser);

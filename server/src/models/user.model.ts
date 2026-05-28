@@ -16,10 +16,17 @@ export interface IUser extends Document {
 
   followers?: mongoose.Types.ObjectId[];
   following?: mongoose.Types.ObjectId[];
+
+  role: "user" | "admin";
 }
 
 const userSchema: Schema<IUser> = new Schema(
   {
+    role: {
+  type: String,
+  enum: ["user", "admin"],
+  default: "user",
+},
     name: {
       type: String,
       required: true,

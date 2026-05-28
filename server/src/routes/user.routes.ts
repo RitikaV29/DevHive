@@ -8,7 +8,7 @@ import {
   getSingleUser,
   updateProfile,
   deleteUser,
-} from "../controller/user.controller";
+} from "../controllers/user.controller";
 
 
 

@@ -1,15 +1,13 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-import User from "../model/user.model";
-
+import User from "../models/user.model";
 
 // ================= REGISTER =================
 
 export const registerUser = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { name, username, email, password } = req.body;
@@ -57,9 +55,9 @@ export const registerUser = async (
       process.env.JWT_SECRET as string,
       {
         expiresIn: "7d",
-      }
+      },
     );
-
+    const { password: _, ...safeUser } = user.toObject();
     // cookie options
     const cookieOptions = {
       httpOnly: true,
@@ -74,9 +72,9 @@ export const registerUser = async (
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user,
+      user: safeUser,
+      
     });
-
   } catch (error) {
     console.log(error);
 
@@ -87,15 +85,10 @@ export const registerUser = async (
   }
 };
 
-
 // ================= Login =================
 
-export const loginUser = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
-
     const { loginId, password } = req.body;
 
     // validation
@@ -112,8 +105,8 @@ export const loginUser = async (
     const user = await User.findOne({
       $or: [
         { email: loginId.toLowerCase() },
-        { username: loginId.toLowerCase() }
-      ]
+        { username: loginId.toLowerCase() },
+      ],
     });
 
     if (!user) {
@@ -126,10 +119,7 @@ export const loginUser = async (
     }
 
     // compare password
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       res.status(400).json({
@@ -144,13 +134,14 @@ export const loginUser = async (
     const token = jwt.sign(
       {
         id: user._id,
+        role: user.role,
       },
       process.env.JWT_SECRET as string,
       {
         expiresIn: "7d",
-      }
+      },
     );
-
+    const { password: _, ...safeUser } = user.toObject();
     // cookie
     res.cookie("token", token, {
       httpOnly: true,
@@ -162,18 +153,16 @@ export const loginUser = async (
     res.status(200).json({
       success: true,
       message: "Login successful",
-      user,
+      user: safeUser,
+      token,
     });
-
   } catch (error) {
-
     console.log(error);
 
     res.status(500).json({
       success: false,
       message: "Server Error",
     });
-
   }
 };
 
@@ -181,17 +170,15 @@ export const loginUser = async (
 
 export const logoutUser = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
-
     res.clearCookie("token");
 
     res.status(200).json({
       success: true,
       message: "Logout successful",
     });
-
   } catch (error) {
     console.log(error);
 

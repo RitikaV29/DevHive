@@ -2,16 +2,12 @@
 
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../model/user.model";
-
-interface AuthRequest extends Request {
-  user?: any;
-}
+import User from "../models/user.model";
 
 export const protect = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const token = req.cookies.token;
@@ -23,12 +19,22 @@ export const protect = async (
       });
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as { id: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+    };
 
-    req.user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    req.user = {
+      _id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    };
 
     next();
   } catch (error) {
