@@ -10,6 +10,7 @@ import Login from "./auth/Login";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -19,9 +20,10 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Navigate to="/login" />}
+          element={<Home/>}
         />
-
+        
+        
         <Route
           path="/register"
           element={<Register />}
