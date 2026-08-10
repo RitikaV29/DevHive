@@ -46,6 +46,26 @@ if (!req.user) {
    }
 }
 
+
+
+export const getAllPosts=async(req:Request,res:Response)=>{
+  try{
+    const posts=await Post.find().populate("user", "name username avatar");
+    res.status(200).json({
+      success:true,
+      message:"Posts fetched successfully",
+      posts,
+    })
+  }
+  catch(error){
+    res.status(500).json({
+      success:false,
+      message:"Server Error",
+      error,
+    })
+  }
+}
+
 export const getPostByUserId=async(req:Request,res:Response)=>{
   try{
     if (!req.user) {

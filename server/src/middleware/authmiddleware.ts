@@ -33,11 +33,15 @@ export const protect = async (
       });
     }
     req.user = {
-      _id: user._id.toString(),
-      email: user.email,
-      role: user.role,
-    };
-
+  ...user.toObject(),
+  _id: user._id.toString(),
+  followers: user.followers?.map(
+    (id) => id.toString()
+  ),
+  following: user.following?.map(
+    (id) => id.toString()
+  ),
+};
     next();
   } catch (error) {
     res.status(401).json({

@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
     REGISTER: "/api/auth/register",
     LOGIN: "/api/auth/login",
     LOGOUT: "/api/auth/logout",
+    ME:"/api/auth/me"
   },
 
   // ========================================
@@ -35,8 +36,9 @@ export const API_ENDPOINTS = {
 
     GET_POST_BY_USER:
       "/api/post/getPostByUserId",
+    
+    GET_ALL_POSTS: "/api/post/getAllPosts",  
 
-    DELETE_POST: (id: string) =>
-      `/api/post/deletePost/${id}`,
+    DELETE_POST:`/api/post/deletePost`,
   },
 };

@@ -18,7 +18,7 @@ const Navbar = () => {
             </a>
           </li>
 
-          <li>
+          {/* <li>
             <a
               href="#"
               className="hover:text-violet-500 transition-all duration-300"
@@ -34,23 +34,24 @@ const Navbar = () => {
             >
               Projects
             </a>
-          </li>
+          </li> */}
 
+     
           <li>
             <a
-              href="#"
+              href="/register"
               className="hover:text-violet-500 transition-all duration-300"
             >
-              Community
+              Register
             </a>
           </li>
-
+          
           <li>
             <a
-              href="#"
+              href="/login"
               className="hover:text-violet-500 transition-all duration-300"
             >
-              Jobs
+             Login
             </a>
           </li>
         </ul>

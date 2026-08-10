@@ -2,8 +2,11 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import developerAnimation from "../assets/developerAnimation.json";
 import Navbar from "../components/layout/Navbar";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
 
 const Home = () => {
+  const navigate=useNavigate();
   return (
     <div className="min-h-screen bg-black">
       <Navbar />
@@ -64,7 +67,9 @@ const Home = () => {
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="bg-violet-600 hover:bg-violet-700 transition px-6 py-3 rounded-lg text-white font-medium">
+              <button onClick={
+              ()=>navigate("/register")
+              } className="bg-violet-600 hover:bg-violet-700 transition px-6 py-3 rounded-lg text-white font-medium">
                 Get Started
               </button>
 
@@ -86,6 +91,7 @@ const Home = () => {
             </div>
           </div>
         </div>
+      
       </section>
     </div>
   );

@@ -154,7 +154,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: "Login successful",
       user: safeUser,
-      token,
+      
     });
   } catch (error) {
     console.log(error);
@@ -185,6 +185,25 @@ export const logoutUser = async (
     res.status(500).json({
       success: false,
       message: "Server Error",
+    });
+  }
+};
+
+
+
+export const getMe = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error"
     });
   }
 };

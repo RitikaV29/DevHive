@@ -122,6 +122,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 
 import api from "../api/axios";
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
+import { useAuth } from "./AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -130,6 +131,7 @@ const Login = () => {
     loginId: "",
     password: "",
   });
+  const { login } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -150,25 +152,13 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const response = await api.post(
-        API_ENDPOINTS.AUTH.LOGIN,
-        formData
-      );
+    await login(formData);
+       
+      
+    toast.success("Login successful");
 
-      localStorage.setItem(
-        "token",
-        response.data.token
-      );
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
-
-      toast.success(response.data.message);
-       console.log(response.data.user);
-
-      navigate("/");
+  navigate("/userDashboard");
+      
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
