@@ -40,5 +40,15 @@ export const API_ENDPOINTS = {
     GET_ALL_POSTS: "/api/post/getAllPosts",  
 
     DELETE_POST:`/api/post/deletePost`,
+    UPDATE_POST:`/api/post/updatePost`,
+    LIKE_POST:`/api/post/likePost`
+  },
+
+  // ========================================
+  // COMMENT ENDPOINTS
+  // ========================================
+  COMMENT: {
+    CREATE_COMMENT: (postId: string) => `/api/comment/createComment/${postId}`,
+    GET_COMMENTS_BY_POST_ID: (postId: string) => `/api/comment/getCommentsByPostId/${postId}`,
   },
 };

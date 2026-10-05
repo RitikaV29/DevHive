@@ -24,3 +24,13 @@ export const deletePost=async(id:string)=>{
   const response=await api.delete(`${API_ENDPOINTS.POST.DELETE_POST}/${id}`)
   return response.data;
 }
+
+export const updatePost=async(id:string,formData:FormData)=>{
+  const response=await api.put(`${API_ENDPOINTS.POST.UPDATE_POST}/${id}`,formData)
+  return response.data;
+}
+
+export const likePost=async(id:string)=>{
+  const response=await api.post(`${API_ENDPOINTS.POST.LIKE_POST}/${id}`)
+  return response.data;
+}

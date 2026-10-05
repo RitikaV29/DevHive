@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import postRoutes from "./routes/post.routes";
+import commentRoutes from "./routes/comment.routes";
 dotenv.config();
 
 connectDB();
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/post",postRoutes);
+app.use("/api/comment",commentRoutes);
 app.get("/", (req, res) => {
   res.send("API is running...");
 });

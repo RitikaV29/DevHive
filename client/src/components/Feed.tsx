@@ -6,40 +6,44 @@ import { getAllPosts, getPostsByUserId } from "../services/postService";
 import { useAuth } from "../auth/AuthContext";
 
 const Feed = () => {
- const formatDate = (date: string) => {
-  const postDate = new Date(date);
-  const now = new Date();
+  const formatDate = (date: string) => {
+    const postDate = new Date(date);
+    const now = new Date();
 
-  const diff = now.getTime() - postDate.getTime();
+    const diff = now.getTime() - postDate.getTime();
 
-  const minutes = Math.floor(diff / (1000 * 60));
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
 
-  return postDate.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
+    return postDate.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
   const auth = useAuth();
-   const userId=auth?.user?._id;
+  const userId = auth?.user?._id;
   console.log("Authenticated user:", auth?.user);
   console.log("Authenticated user:", auth?.user);
- 
+ const handlePostEdit = (updatedPost: any) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === updatedPost._id ? updatedPost : post
+      )
+    );
+  }
   const handlePostDelete = (postId: string) => {
-  setPosts((prevPosts) =>
-    prevPosts.filter((post) => post._id !== postId)
-  );
-};
-  //   {
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
+
   //     id: 1,
   //     user: {
   //       name: "Ritika Vishwakarma",
@@ -108,18 +112,16 @@ const Feed = () => {
   //     createdAt: "3 days ago",
   //   },
   // ];
-  useEffect(()=>{
-    const fetchPosts=async()=>{
-
-      try{
-       
-        if(!userId){
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        if (!userId) {
           console.error("User ID is not available.");
           return;
         }
-        const response=await getAllPosts();
+        const response = await getAllPosts();
+        console.log("Posts from backend:", response);
         setPosts(response);
-      
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -127,34 +129,36 @@ const Feed = () => {
 
     fetchPosts();
   }, [userId]);
- console.log(posts)
+  console.log(posts);
   return (
     <div className="space-y-5">
       <CreatePostCard onClick={() => setShowCreatePost(true)} />
       {showCreatePost && (
-      <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
-  <CreatePost onClose={() => setShowCreatePost(false)} />
-</div>
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
+          <CreatePost onClose={() => setShowCreatePost(false)} />
+        </div>
       )}
-    <div className="space-y-5">
-  {posts.map((post) => (
-    <PostCard
-    _id={post._id}
-      key={post._id}
-     user={post.user}
-      postType={post.postType}
-      content={post.content}
-      media={post.media}
-      likes={post.likes?.length || 0}
-      comments={post.comments?.length || 0}
-      githubLink={post.githubLink}
-      liveLink={post.liveLink}
-      techStack={post.techStack}
-      createdAt={formatDate(post.createdAt)}
-      onDelete={handlePostDelete}
-    />
-  ))}
-</div>
+      <div className="space-y-5">
+        {posts.map((post) => (
+          <PostCard
+            _id={post._id}
+            key={post._id}
+            user={post.user}
+            postType={post.postType}
+            content={post.content}
+            media={post.media}
+            likes={post.likes?.length || 0}
+            comments={post.comments?.length || 0}
+            githubLink={post.githubLink}
+            liveLink={post.liveLink}
+            techStack={post.techStack}
+            createdAt={formatDate(post.createdAt)}
+            onDelete={handlePostDelete}
+            onEdit={handlePostEdit}
+            isLiked={post.isLiked}
+          />
+        ))}
+      </div>
     </div>
   );
 };
