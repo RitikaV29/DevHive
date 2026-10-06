@@ -23,6 +23,7 @@ export interface IPost extends Document {
   liveLink?: string;
 
   techStack?: string[];
+  savedBy: mongoose.Types.ObjectId[];
 }
 
 const postSchema: Schema<IPost> = new mongoose.Schema(
@@ -79,6 +80,12 @@ const postSchema: Schema<IPost> = new mongoose.Schema(
     techStack: [
       {
         type: String,
+      },
+    ],
+    savedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
   },

@@ -1,14 +1,14 @@
-import { Heart, MessageCircle, Globe } from "lucide-react";
+import { Heart, MessageCircle, Globe,  BookMarkedIcon, BookMarked, Bookmark } from "lucide-react";
 import { EllipsisVertical } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import { deletePost, likePost, updatePost } from "../../services/postService";
+import { deletePost, likePost, toggleSavePost, updatePost } from "../../services/postService";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { IoMdTrash } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import PostEditModal, { type UpdatedPostData } from "./PostEditModal";
-import { createComment, getCommentsByPostId, } from "../../services/commentService";
+import { createComment, deleteComment, getCommentsByPostId, } from "../../services/commentService";
 
 
 interface Media {
@@ -17,6 +17,7 @@ interface Media {
 }
 
 interface PostProps {
+  isSaved:boolean;
   _id: string;
   user: {
     _id: string;
@@ -48,6 +49,7 @@ interface PostProps {
 
 
 const PostCard = ({
+  isSaved,
   isLiked,
   _id,
   user:postUser,
@@ -74,6 +76,7 @@ const [commentContent, setCommentContent] = useState("");
   const [isLikedState, setIsLikedState] = useState(isLiked);
   const [commentsCount, setCommentsCount] = useState(comments);
   const [commentsList, setCommentsList] = useState<any[]>([]);
+  const [isSavedState, setIsSavedState] = useState(isSaved);
   useEffect(() => {
     const fetchComments=async()=>{
       try{
@@ -101,6 +104,22 @@ const [commentContent, setCommentContent] = useState("");
     }
   }
 
+
+ const handleSave = async () => {
+  try {
+    const response = await toggleSavePost(_id);
+
+    if (response.message === "Post saved successfully") {
+     setIsSavedState(true);
+    } else {
+      setIsSavedState(false);
+   
+    }
+  } catch (error) {
+    console.error("Error saving post:", error);
+    toast.error("Failed to save post");
+  }
+};
 
   const handleCommentSubmit=async()=>{
     try{
@@ -142,7 +161,22 @@ const [commentContent, setCommentContent] = useState("");
     toast.error("Failed to delete the post.");
   }
 };
+const handleDeleteComment = async (commentId: string) => {
+  try {
+    await deleteComment(commentId);
 
+    setCommentsList((prev) =>
+      prev.filter((comment) => comment._id !== commentId)
+    );
+
+    setCommentsCount((prev) => prev - 1);
+
+  
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    toast.error("Failed to delete comment.");
+  }
+};
 const handleEdit=async(updatedPost:UpdatedPostData)=>{
 try{
  const formData=new FormData();
@@ -211,7 +245,7 @@ try{
               Project
             </span>
           )} */}
-         <div className="relative">
+         <div className="relative flex">
 
  {isCurrentUser && (
       <>
@@ -257,9 +291,12 @@ try{
         )}
       </>
     )}
-
+    <Bookmark onClick={handleSave} size={20}  className={isSavedState ? "text-violet-500" : "text-gray-400"}
+    fill={isSavedState ? "currentColor" : "none"}/>
+ 
 </div>
        
+
           <p className="text-xs text-gray-500 mt-2">{createdAt}</p>
         </div>
       </div>
@@ -393,17 +430,70 @@ try{
           </div>
         )}
 
-        <div>
-          <p className="text-white text-sm font-semibold">
-            {comment.user?.username
-              ? `@${comment.user.username}`
-              : comment.user?.name}
-          </p>
+      <div className="flex-1">
 
-          <p className="text-gray-300 text-sm mt-1">
-            {comment.content}
-          </p>
-        </div>
+  <div className="flex justify-between items-start">
+
+    {/* Username + Comment */}
+    <div>
+      <p className="text-white text-sm font-semibold">
+        {comment.user?.username
+          ? `@${comment.user.username}`
+          : comment.user?.name}
+      </p>
+
+      <p className="text-gray-300 text-sm mt-1">
+        {comment.content}
+      </p>
+    </div>
+
+    {/* Three dots */}
+    {comment.canDelete && (
+      <div className="relative">
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+
+            setCommentsList((prev) =>
+              prev.map((item) =>
+                item._id === comment._id
+                  ? {
+                      ...item,
+                      showMenu: !item.showMenu,
+                    }
+                  : {
+                      ...item,
+                      showMenu: false,
+                    }
+              )
+            );
+          }}
+          className="text-gray-400 hover:text-white p-1"
+        >
+          <EllipsisVertical size={18} />
+        </button>
+
+        {/* Delete popup */}
+        {comment.showMenu && (
+          <div className="absolute right-0 top-7 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-50 overflow-hidden">
+
+            <button
+              onClick={() => handleDeleteComment(comment._id)}
+              className="px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 w-full text-left"
+            >
+              Delete
+            </button>
+
+          </div>
+        )}
+
+      </div>
+    )}
+
+  </div>
+
+</div>
       </div>
     ))
   )}

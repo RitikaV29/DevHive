@@ -1,4 +1,4 @@
-import { createPost,getPostByUserId,deletePost, getAllPosts, updatePost, likePost } from "../controllers/post.controller";
+import { createPost,getPostByUserId,deletePost, getAllPosts, updatePost, likePost,toggleSavePost } from "../controllers/post.controller";
 import express from "express";
 import { protect } from "../middleware/authmiddleware";
 import upload from "../middleware/multer";
@@ -9,4 +9,5 @@ router.get("/getPostByUserId",protect,getPostByUserId);
 router.delete("/deletePost/:id",protect,deletePost);
 router.put("/updatePost/:id",protect,upload.array("media",5),updatePost);
 router.post("/likePost/:id",protect,likePost);
+router.post("/toggleSavePost/:id",protect,toggleSavePost);
 export default router;

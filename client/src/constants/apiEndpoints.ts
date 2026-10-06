@@ -41,7 +41,9 @@ export const API_ENDPOINTS = {
 
     DELETE_POST:`/api/post/deletePost`,
     UPDATE_POST:`/api/post/updatePost`,
-    LIKE_POST:`/api/post/likePost`
+    LIKE_POST:`/api/post/likePost`,
+    TOGGLE_SAVE_POST:`/api/post/toggleSavePost`
+
   },
 
   // ========================================
@@ -50,5 +52,6 @@ export const API_ENDPOINTS = {
   COMMENT: {
     CREATE_COMMENT: (postId: string) => `/api/comment/createComment/${postId}`,
     GET_COMMENTS_BY_POST_ID: (postId: string) => `/api/comment/getCommentsByPostId/${postId}`,
+    DELETE_COMMENT: (commentId: string) => `/api/comment/deleteComment/${commentId}`,
   },
 };

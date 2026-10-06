@@ -34,3 +34,8 @@ export const likePost=async(id:string)=>{
   const response=await api.post(`${API_ENDPOINTS.POST.LIKE_POST}/${id}`)
   return response.data;
 }
+
+export const toggleSavePost=async(id:string)=>{
+  const response=await api.post(`${API_ENDPOINTS.POST.TOGGLE_SAVE_POST}/${id}`)
+  return response.data;
+}

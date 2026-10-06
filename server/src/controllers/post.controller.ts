@@ -58,12 +58,28 @@ export const getAllPosts = async (req: Request, res: Response) => {
 
     const posts = await Post.find().populate("user", "name username avatar");
    
-     const postsWithLikeStatus = posts.map((post) => ({
-      ...post.toObject(),
-      isLiked: post.likes.some(
+   const postsWithLikeStatus = posts.map((post) => {
+  const postObject = post.toObject();
+
+  const isLiked = userId
+    ? post.likes.some(
         (id) => id.toString() === userId.toString()
-      ),
-    }));
+      )
+    : false;
+
+  const isSaved = userId
+    ? post.savedBy.some(
+        (id) => id.toString() === userId.toString()
+      )
+    : false;
+
+  return {
+    ...postObject,
+    isLiked,
+    isSaved,
+  };
+});
+
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
@@ -90,13 +106,27 @@ export const getPostByUserId = async (req: Request, res: Response) => {
 
     const posts = await Post.find({ user: userId });
 
-    const postsWithLikeStatus = posts.map((post) => ({
-      ...post.toObject(),
-      isLiked: post.likes.some(
-        (id) => id.toString() === userId.toString()
-      ),
-    }));
+    const postsWithLikeStatus = posts.map((post) => {
+  const postObject = post.toObject();
 
+  const isLiked = userId
+    ? post.likes.some(
+        (id) => id.toString() === userId.toString()
+      )
+    : false;
+
+  const isSaved = userId
+    ? post.savedBy.some(
+        (id) => id.toString() === userId.toString()
+      )
+    : false;
+
+  return {
+    ...postObject,
+    isLiked,
+    isSaved,
+  };
+});
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
@@ -281,6 +311,63 @@ const userObjectId = new mongoose.Types.ObjectId(userId);
       success: true,
       message: "Post liked successfully",
       likes: post.likes,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error,
+    });
+  }
+};
+
+export const toggleSavePost = async (req: Request, res: Response) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    const isSaved = post.savedBy.includes(userObjectId);
+
+    if (isSaved) {
+      post.savedBy = post.savedBy.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+
+      await post.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Post unsaved successfully",
+        savedBy: post.savedBy,
+      });
+    }
+
+    post.savedBy.push(userObjectId);
+
+    await post.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Post saved successfully",
+      savedBy: post.savedBy,
     });
   } catch (error) {
     return res.status(500).json({
