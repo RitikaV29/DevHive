@@ -15,3 +15,10 @@ export const deleteComment=async(commentId:string)=>{
     const response=await api.delete(`${API_ENDPOINTS.COMMENT.DELETE_COMMENT(commentId)}`);
     return response.data;
 }
+export const createReply=async(postId:string,content:string,parentCommentId:string)=>{
+    const response=await api.post(`${API_ENDPOINTS.COMMENT.CREATE_REPLY(postId)}`, {
+        content,
+        parentCommentId
+    });
+    return response.data;
+}

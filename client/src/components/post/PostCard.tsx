@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { IoMdTrash } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import PostEditModal, { type UpdatedPostData } from "./PostEditModal";
-import { createComment, deleteComment, getCommentsByPostId, } from "../../services/commentService";
+import { createComment, createReply, deleteComment, getCommentsByPostId, } from "../../services/commentService";
 
 
 interface Media {
@@ -68,6 +68,8 @@ const PostCard = ({
   const {user}= useAuth();
   const isCurrentUser = user?._id === postUser._id;
   console.log("isLiked from backend:", isLiked);
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
+const [replyContent, setReplyContent] = useState("");
 const [showComments, setShowComments] = useState(false);
 const [commentContent, setCommentContent] = useState("");
   const [showMenu, setShowMenu] = useState(false);
@@ -104,7 +106,24 @@ const [commentContent, setCommentContent] = useState("");
     }
   }
 
+const handleReplySubmit = async (parentCommentId: string) => {
+  if (!replyContent.trim()) return;
 
+  try {
+    await createReply(_id, replyContent, parentCommentId);
+
+    const updatedComments = await getCommentsByPostId(_id);
+
+    setCommentsList(updatedComments);
+    setReplyContent("");
+    setActiveReplyId(null);
+
+    
+  } catch (error) {
+    console.error("Error creating reply:", error);
+    toast.error("Failed to add reply.");
+  }
+};
  const handleSave = async () => {
   try {
     const response = await toggleSavePost(_id);
@@ -121,18 +140,27 @@ const [commentContent, setCommentContent] = useState("");
   }
 };
 
-  const handleCommentSubmit=async()=>{
-    try{
-     const result=await createComment(_id,commentContent);
-     console.log("Comment created:",result);
-     setCommentContent("");
-     setCommentsCount((prev) => prev + 1);
-    }
-    catch(error){
-      console.error("Error submitting comment:",error);
-      toast.error("Failed to submit the comment.");
-    }
+  
+  const handleCommentSubmit = async () => {
+  if (!commentContent.trim()) return;
+
+  try {
+    const result = await createComment(_id, commentContent);
+
+    console.log("Comment created:", result);
+
+    // Fetch updated comments
+    const updatedComments = await getCommentsByPostId(_id);
+
+    setCommentsList(updatedComments);
+    setCommentsCount(updatedComments.length);
+
+    setCommentContent("");
+  } catch (error) {
+    console.error("Error submitting the comment:", error);
+    toast.error("Failed to submit the comment.");
   }
+};
  const handleDelete = async () => {
   const result = await Swal.fire({
     title: "Delete Post?",
@@ -166,16 +194,34 @@ const handleDeleteComment = async (commentId: string) => {
     await deleteComment(commentId);
 
     setCommentsList((prev) =>
-      prev.filter((comment) => comment._id !== commentId)
+      prev.filter(
+        (comment) =>
+          comment._id !== commentId &&
+          comment.parentComment?.toString() !== commentId
+      )
     );
 
     setCommentsCount((prev) => prev - 1);
 
-  
+   
   } catch (error) {
     console.error("Error deleting comment:", error);
     toast.error("Failed to delete comment.");
   }
+};
+const topLevelComments = commentsList.filter(
+  (comment) => !comment.parentComment
+);
+
+const getReplies = (commentId: string) => {
+  return commentsList.filter((item) => {
+    const parentId =
+      typeof item.parentComment === "string"
+        ? item.parentComment
+        : item.parentComment?._id?.toString();
+
+    return parentId === commentId;
+  });
 };
 const handleEdit=async(updatedPost:UpdatedPostData)=>{
 try{
@@ -416,7 +462,7 @@ try{
       No comments yet.
     </p>
   ) : (
-    commentsList.map((comment) => (
+    topLevelComments.map((comment) => (
       <div key={comment._id} className="flex gap-3">
         {comment.user?.avatar ? (
           <img
@@ -445,6 +491,68 @@ try{
       <p className="text-gray-300 text-sm mt-1">
         {comment.content}
       </p>
+     {/* Reply button */}
+<button
+  onClick={() => {
+    setActiveReplyId(
+      activeReplyId === comment._id ? null : comment._id
+    );
+    setReplyContent("");
+  }}
+  className="text-gray-500 hover:text-violet-400 text-xs mt-2"
+>
+  Reply
+</button>
+
+{/* Reply input */}
+{activeReplyId === comment._id && (
+  <div className="flex gap-2 mt-3">
+    <input
+      type="text"
+      value={replyContent}
+      onChange={(e) => setReplyContent(e.target.value)}
+      placeholder="Write a reply..."
+      className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-4 py-2 text-white text-sm outline-none"
+    />
+
+    <button
+      onClick={() => handleReplySubmit(comment._id)}
+      className="bg-violet-600 text-white px-4 py-2 rounded-full text-sm"
+    >
+      Reply
+    </button>
+  </div>
+)}
+{/* Display replies */}
+<div className="ml-8 mt-3 space-y-3">
+  {getReplies(comment._id).map((reply) => (
+    <div key={reply._id} className="flex gap-2">
+      {reply.user?.avatar ? (
+        <img
+          src={reply.user.avatar}
+          alt={reply.user.name}
+          className="w-7 h-7 rounded-full object-cover"
+        />
+      ) : (
+        <div className="w-7 h-7 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs">
+          {reply.user?.name?.charAt(0)?.toUpperCase() || "U"}
+        </div>
+      )}
+
+      <div className="flex-1">
+        <p className="text-white text-xs font-semibold">
+          {reply.user?.username
+            ? `@${reply.user.username}`
+            : reply.user?.name}
+        </p>
+
+        <p className="text-gray-300 text-sm mt-1">
+          {reply.content}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
     </div>
 
     {/* Three dots */}

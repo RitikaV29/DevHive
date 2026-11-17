@@ -53,5 +53,6 @@ export const API_ENDPOINTS = {
     CREATE_COMMENT: (postId: string) => `/api/comment/createComment/${postId}`,
     GET_COMMENTS_BY_POST_ID: (postId: string) => `/api/comment/getCommentsByPostId/${postId}`,
     DELETE_COMMENT: (commentId: string) => `/api/comment/deleteComment/${commentId}`,
+    CREATE_REPLY: (postId: string) => `/api/comment/reply/${postId}`,
   },
 };
