@@ -1,3 +1,119 @@
+// import { useState } from "react";
+// import {
+//   Home,
+//   SquarePen,
+//   Rocket,
+//   Users,
+//   UserSearch,
+//   Bookmark,
+//   Bell,
+//   User,
+//   Settings,
+//   LogOut,
+//   ChevronLeft,
+//   ChevronRight,
+// } from "lucide-react";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { useAuth } from "../../auth/AuthContext";
+
+// const Sidebar = () => {
+//   const [collapsed, setCollapsed] = useState(false);
+//   const location = useLocation();
+//   const navigate = useNavigate();
+//    const{user}=useAuth();
+//    const{logout}=useAuth();
+
+//    const handleLogout=async()=>{
+//    await logout();
+//    navigate("/")
+//    }
+//    console.log(user);
+//   const menuItems = [
+    
+//     { title: "Feed", icon: Home, link: "/userDashboard/feed" },
+//     { title: "Create Post", icon: SquarePen, link: "/userDashboard/createPost" },
+//     { title: "Explore Projects", icon: Rocket, link: "/userDashboard/exploreProjects" },
+//     { title: "Communities", icon: Users },
+//     { title: "Find Developers", icon: UserSearch },
+//     { title: "Saved Posts", icon: Bookmark },
+//     { title: "Notifications", icon: Bell },
+//     { title: "Profile", icon: User },
+//     { title: "Settings", icon: Settings },
+//   ];
+
+//   return (
+//     <aside
+//       className={`min-h-screen bg-[#0d0d0d] border-r border-zinc-800 px-4 py-6 flex flex-col transition-all duration-300
+//       ${collapsed ? "w-20" : "w-72"}`}
+//     >
+//       {/* Toggle */}
+//       <div className="flex justify-end mb-4">
+//         <button
+//           onClick={() => setCollapsed(!collapsed)}
+//           className="text-gray-300 hover:text-white"
+//         >
+//           {collapsed ? <ChevronRight /> : <ChevronLeft />}
+//         </button>
+//       </div>
+
+//       {/* Menu */}
+//       <div className="space-y-2 flex-1">
+//         {menuItems.map((item) => {
+//           const Icon = item.icon;
+//   const isActive = item.link === location.pathname;
+
+//           return (
+//             <button
+//               key={item.title}
+//               onClick={() => item.link && navigate(item.link)}
+//               className={`w-full flex items-center gap-4 px-3 py-3 rounded-xl transition ${
+//                 isActive
+//                   ? "bg-violet-600 text-white"
+//                   : "text-gray-300 hover:bg-violet-600 hover:text-white"
+//               }`}
+//             >
+//               <Icon size={21} />
+//               {!collapsed && (
+//                 <span className="font-medium">{item.title}</span>
+//               )}
+//             </button>
+//           );
+//         })}
+//       </div>
+
+//       {/* User */}
+//       <div className="border-t border-zinc-800 pt-5">
+//         <div className="flex items-center gap-3 mb-5">
+//          {user?.avatar ? (
+//             <img
+//               src={user.avatar}
+//               className="w-10 h-10 rounded-full"
+//             />
+//           ) : (
+//             <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center text-white font-semibold">
+//               {user?.name?.charAt(0)?.toUpperCase() || "U"}
+//             </div>
+//           )}
+
+//           {!collapsed && (
+//             <div>
+//               <h3 className="text-white font-semibold">{user?.name}</h3>
+//               <p className="text-gray-400 text-sm">{user?.email}</p>
+//             </div>
+//           )}
+//         </div>
+
+//         <button onClick={handleLogout} className="w-full flex items-center justify-center gap-3 bg-red-500/10 text-red-400 py-3 rounded-xl hover:bg-red-500 hover:text-white transition">
+//           <LogOut  size={20} />
+//           {!collapsed && "Logout"}
+//         </button>
+//       </div>
+//     </aside>
+//   );
+// };
+
+// export default Sidebar;
+
 import { useState } from "react";
 import {
   Home,
@@ -10,101 +126,122 @@ import {
   User,
   Settings,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+
+const menuItems = [
+  { title: "Feed", icon: Home, link: "/userDashboard/feed" },
+  { title: "Create Post", icon: SquarePen, link: "/userDashboard/createPost" },
+  { title: "Explore Projects", icon: Rocket, link: "/userDashboard/exploreProjects" },
+  { title: "Communities", icon: Users },
+  { title: "Find Developers", icon: UserSearch },
+  { title: "Saved Posts", icon: Bookmark },
+  { title: "Notifications", icon: Bell },
+  { title: "Profile", icon: User },
+  { title: "Settings", icon: Settings },
+];
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-   const{user}=useAuth();
-   const{logout}=useAuth();
+  const { user, logout } = useAuth();
 
-   const handleLogout=async()=>{
-   await logout();
-   navigate("/")
-   }
-   console.log(user);
-  const menuItems = [
-    
-    { title: "Feed", icon: Home, link: "/userDashboard/feed" },
-    { title: "Create Post", icon: SquarePen, link: "/userDashboard/createPost" },
-    { title: "Explore Projects", icon: Rocket },
-    { title: "Communities", icon: Users },
-    { title: "Find Developers", icon: UserSearch },
-    { title: "Saved Posts", icon: Bookmark },
-    { title: "Notifications", icon: Bell },
-    { title: "Profile", icon: User },
-    { title: "Settings", icon: Settings },
-  ];
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
 
   return (
     <aside
-      className={`min-h-screen bg-[#0d0d0d] border-r border-zinc-800 px-4 py-6 flex flex-col transition-all duration-300
-      ${collapsed ? "w-20" : "w-72"}`}
+      className={`flex h-full shrink-0 flex-col border-r border-zinc-800/80 bg-[#0d0d0f] px-3 py-4 transition-[width] duration-300 ${
+        collapsed ? "w-[72px]" : "w-64"
+      }`}
     >
       {/* Toggle */}
-      <div className="flex justify-end mb-4">
+      <div className={`mb-4 flex ${collapsed ? "justify-center" : "justify-end"}`}>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-gray-300 hover:text-white"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="rounded-lg p-2 text-zinc-500 transition hover:bg-white/5 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
         >
-          {collapsed ? <ChevronRight /> : <ChevronLeft />}
+          {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
         </button>
       </div>
 
       {/* Menu */}
-      <div className="space-y-2 flex-1">
+      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
-  const isActive = item.link === location.pathname;
+          const isActive = !!item.link && location.pathname.startsWith(item.link);
 
           return (
             <button
               key={item.title}
               onClick={() => item.link && navigate(item.link)}
-              className={`w-full flex items-center gap-4 px-3 py-3 rounded-xl transition ${
+              title={collapsed ? item.title : undefined}
+              aria-current={isActive ? "page" : undefined}
+              className={`relative flex w-full items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400 ${
+                collapsed ? "justify-center" : ""
+              } ${
                 isActive
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-300 hover:bg-violet-600 hover:text-white"
+                  ? "bg-violet-600/15 text-violet-200"
+                  : item.link
+                  ? "text-zinc-400 hover:bg-white/5 hover:text-white"
+                  : "text-zinc-600 hover:bg-white/[0.03] hover:text-zinc-400"
               }`}
             >
-              <Icon size={21} />
-              {!collapsed && (
-                <span className="font-medium">{item.title}</span>
+              {isActive && (
+                <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-violet-500" />
+              )}
+              <Icon size={20} className={`shrink-0 ${isActive ? "text-violet-400" : ""}`} />
+              {!collapsed && <span className="truncate">{item.title}</span>}
+              {!collapsed && !item.link && (
+                <span className="ml-auto rounded-full bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-500">
+                  Soon
+                </span>
               )}
             </button>
           );
         })}
-      </div>
+      </nav>
 
       {/* User */}
-      <div className="border-t border-zinc-800 pt-5">
-        <div className="flex items-center gap-3 mb-5">
-         {user?.avatar ? (
+      <div className="mt-4 border-t border-zinc-800/80 pt-4">
+        <div
+          className={`flex items-center gap-3 rounded-xl p-2 ${
+            collapsed ? "justify-center" : "bg-white/[0.03]"
+          }`}
+        >
+          {user?.avatar ? (
             <img
               src={user.avatar}
-              className="w-10 h-10 rounded-full"
+              alt={user?.name}
+              className="h-10 w-10 shrink-0 rounded-full object-cover"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center text-white font-semibold">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 font-semibold text-white">
               {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
           )}
 
           {!collapsed && (
-            <div>
-              <h3 className="text-white font-semibold">{user?.name}</h3>
-              <p className="text-gray-400 text-sm">{user?.email}</p>
+            <div className="min-w-0">
+              <h3 className="truncate text-sm font-semibold text-white">{user?.name}</h3>
+              <p className="truncate text-xs text-zinc-500">{user?.email}</p>
             </div>
           )}
         </div>
 
-        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-3 bg-red-500/10 text-red-400 py-3 rounded-xl hover:bg-red-500 hover:text-white transition">
-          <LogOut  size={20} />
+        <button
+          onClick={handleLogout}
+          title={collapsed ? "Logout" : undefined}
+          className="mt-2 flex w-full items-center justify-center gap-2.5 rounded-xl py-2.5 text-sm font-medium text-zinc-400 transition hover:bg-red-500/10 hover:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400"
+        >
+          <LogOut size={19} />
           {!collapsed && "Logout"}
         </button>
       </div>

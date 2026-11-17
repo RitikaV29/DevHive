@@ -1,24 +1,45 @@
 
-import { Outlet } from 'react-router-dom'
-import Sidebar from '../components/layout/Sidebar'
+// import { Outlet } from 'react-router-dom'
+// import Sidebar from '../components/layout/Sidebar'
+
+// const UserDashboard = () => {
+//   return (
+//        <div className="flex h-screen bg-base-100 overflow-hidden  ">
+      
+//       {/* Sidebar */}
+//       <Sidebar  />
+ 
+//       {/* Main Content */}
+//       <div className="flex-1 flex flex-col overflow-hidden">
+        
+
+//         <main className="flex-1 overflow-y-auto p-2 sm:p-4">
+//        <Outlet/>
+//         </main>
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default UserDashboard
+
+import { Outlet } from "react-router-dom";
+import Sidebar from "../components/layout/Sidebar";
 
 const UserDashboard = () => {
   return (
-       <div className="flex h-screen bg-base-100 overflow-hidden  ">
-      
+    <div className="flex h-screen overflow-hidden bg-[#09090b]">
       {/* Sidebar */}
-      <Sidebar  />
- 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        
+      <Sidebar />
 
-        <main className="flex-1 overflow-y-auto p-2 sm:p-4">
-       <Outlet/>
+      {/* Main Content */}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+          <Outlet />
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserDashboard
+export default UserDashboard;

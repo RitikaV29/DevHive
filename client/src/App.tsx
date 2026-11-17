@@ -10,6 +10,7 @@ import UserDashboard from "./pages/UserDashboard";
 import CreatePost from "./components/post/CreatePost";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import UserFeed from "./pages/UserFeed";
+import ExploreProjects from "./pages/ExploreProjects";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route index element={<Navigate to="feed" replace />} />
     <Route path="feed" element={<UserFeed />} />
           <Route path="createPost" element={<CreatePost />} />
+          <Route path="exploreProjects" element={<ExploreProjects />} />
         </Route>
         </Route>
         <Route path="/register" element={<Register />} />
