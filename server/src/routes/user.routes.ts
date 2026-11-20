@@ -23,8 +23,8 @@ router.put("/profile/update", protect, updateProfile);
 
 router.delete("/profile/delete", protect, deleteUser);
 
-// public routes
-router.get("/getAll/profile", getAllUsers);
+router.get("/all", protect, getAllUsers);
+
 
 router.get("/:id/getSingle/profile", getSingleUser);
 

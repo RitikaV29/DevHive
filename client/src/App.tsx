@@ -11,6 +11,8 @@ import CreatePost from "./components/post/CreatePost";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import UserFeed from "./pages/UserFeed";
 import ExploreProjects from "./pages/ExploreProjects";
+import FindDevelopers from "./pages/FindDevelopers";
+import MyProfile from "./pages/MyProfile";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
     <Route path="feed" element={<UserFeed />} />
           <Route path="createPost" element={<CreatePost />} />
           <Route path="exploreProjects" element={<ExploreProjects />} />
+          <Route path="findDevelopers" element={<FindDevelopers />} />
+          <Route path="myProfile" element={<MyProfile />} />
         </Route>
         </Route>
         <Route path="/register" element={<Register />} />

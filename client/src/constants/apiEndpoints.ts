@@ -21,7 +21,7 @@ export const API_ENDPOINTS = {
 
     DELETE_PROFILE: "/api/user/profile/delete",
 
-    GET_ALL_USERS: "/api/user/getAll/profile",
+    GET_ALL_USERS: "/api/user/all",
 
     GET_SINGLE_USER: (id: string) =>
       `/api/user/${id}/getSingle/profile`,

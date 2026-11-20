@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { getAllPosts } from "../services/postService";
 import { useAuth } from "../auth/AuthContext";
 import PostCard from "../components/post/PostCard";
+import { ArrowBigDown, ChevronDown } from "lucide-react";
 
 const ExploreProjects = () => {
+  const [isTechOpen, setIsTechOpen] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const auth = useAuth();
   const userId = auth?.user?._id;
@@ -96,17 +98,41 @@ const filteredProjects = projects.filter((post) => {
       onChange={(e) => setSearchTerm(e.target.value)}
     />
 
-    <select className=" bg-[#181818] border border-zinc-800 rounded-xl px-4 py-3 text-gray-300 outline-none focus:border-violet-500"
-      value={selectedTech}
-      onChange={(e) => setSelectedTech(e.target.value)}
-    >
-      <option value="">All Technologies</option>
-      <option value="React">React</option>
-      <option value="Node.js">Node.js</option>
-      <option value="MongoDB">MongoDB</option>
-      <option value="Express">Express</option>
-      <option value="TypeScript">TypeScript</option>
-    </select>
+  
+<div className="relative w-full sm:w-56">
+  <button
+    type="button"
+    onClick={() => setIsTechOpen(!isTechOpen)}
+    className="w-full flex items-center justify-between bg-[#181818] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-gray-200 hover:border-violet-500 transition"
+  >
+    {selectedTech || "All Technologies"}
+    <span className="text-violet-400"><ChevronDown size={18}/></span>
+  </button>
+
+  {isTechOpen && (
+    <div className="absolute top-full left-0 mt-2 w-full bg-[#1c1c1c] border border-zinc-800 rounded-xl p-1.5 shadow-xl shadow-black/40 z-50">
+      {["", "React", "Node.js", "MongoDB", "Express", "TypeScript"].map((tech) => (
+        <button
+          key={tech || "all"}
+          type="button"
+          onClick={() => {
+            setSelectedTech(tech);
+            setIsTechOpen(false);
+          }}
+          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-left transition ${
+            selectedTech === tech
+              ? "bg-violet-500/15 text-violet-400"
+              : "text-gray-300 hover:bg-violet-500/10 hover:text-violet-300"
+          }`}
+        >
+          {tech || "All Technologies"}
+          {selectedTech === tech && <span>✓</span>}
+        </button>
+      ))}
+    </div>
+  )}
+</div>
+
   </div>
 </div>
 

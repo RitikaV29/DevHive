@@ -41,12 +41,32 @@ export const getProfile = async (
 // ================= GET ALL USERS =================
 
 export const getAllUsers = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
-    const users = await User.find()
-      .select("-password")
+    const userId= req.user?._id as string;
+    const {search,skill}= req.query as {search?: string, skill?: string};
+    const query:any={
+      _id: { $ne: userId },
+      role: "user",
+    }
+     if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { username: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Filter by skill
+    if (skill) {
+      query.skills = {
+        $regex: skill,
+        $options: "i",
+      };
+    }
+    const users = await User.find(query)
+      .select("-password -email")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -109,20 +129,22 @@ export const updateProfile = async (
       avatar,
     } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        name,
-        bio,
-        skills,
-        githubLink,
-        avatar,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    ).select("-password");
+   const updates: any = {};
+
+if (name !== undefined) updates.name = name;
+if (bio !== undefined) updates.bio = bio;
+if (skills !== undefined) updates.skills = skills;
+if (githubLink !== undefined) updates.githubLink = githubLink;
+if (avatar !== undefined) updates.avatar = avatar;
+
+const updatedUser = await User.findByIdAndUpdate(
+  req.user._id,
+  { $set: updates },
+  {
+    new: true,
+    runValidators: true,
+  }
+).select("-password");
 
     res.status(200).json({
       success: true,
